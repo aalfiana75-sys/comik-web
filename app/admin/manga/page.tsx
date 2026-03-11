@@ -4,7 +4,7 @@ import { deleteManga } from '@/lib/actions/manga'
 import type { Manga } from '@/types/manga'
 
 export default async function AdminMangaPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data: mangaList, error } = await supabase
     .from('manga')

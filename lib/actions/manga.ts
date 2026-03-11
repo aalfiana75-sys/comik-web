@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import type { CreateMangaInput } from '@/types/manga'
 
 export async function createManga(data: CreateMangaInput) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('manga')
@@ -21,7 +21,7 @@ export async function createManga(data: CreateMangaInput) {
 }
 
 export async function updateManga(id: string, data: Partial<CreateMangaInput>) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('manga')
@@ -38,7 +38,7 @@ export async function updateManga(id: string, data: Partial<CreateMangaInput>) {
 }
 
 export async function deleteManga(id: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('manga')

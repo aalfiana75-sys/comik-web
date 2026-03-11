@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import type { CreatePageInput } from '@/types/page'
 
 export async function addPagesToChapter(chapterId: string, pages: CreatePageInput[]) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('pages')
@@ -19,7 +19,7 @@ export async function addPagesToChapter(chapterId: string, pages: CreatePageInpu
 }
 
 export async function deletePage(id: string, chapterId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('pages')

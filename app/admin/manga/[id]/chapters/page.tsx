@@ -4,13 +4,14 @@ import { notFound } from 'next/navigation'
 import { deleteChapter } from '@/lib/actions/chapter'
 import type { Chapter } from '@/types/chapter'
 
-export default async function AdminChapterListPage({ params }: { params: { id: string } }) {
-  const supabase = createClient()
+export default async function AdminChapterListPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: mangaId } = await params
+  const supabase = await createClient()
   
   const { data: manga, error: mangaError } = await supabase
     .from('manga')
     .select('title')
-    .eq('id', params.id)
+    .eq('id', mangaId)
     .single()
 
   if (mangaError || !manga) {
@@ -20,7 +21,7 @@ export default async function AdminChapterListPage({ params }: { params: { id: s
   const { data: chapters, error: chaptersError } = await supabase
     .from('chapters')
     .select('*')
-    .eq('manga_id', params.id)
+    .eq('manga_id', mangaId)
     .order('chapter_number', { ascending: false })
 
   return (
@@ -35,7 +36,7 @@ export default async function AdminChapterListPage({ params }: { params: { id: s
             <p className="text-neutral-400">Manage all chapters for this manga</p>
           </div>
           <Link 
-            href={`/admin/manga/${params.id}/chapters/new`} 
+            href={`/admin/manga/${mangaId}/chapters/new`} 
             className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition"
           >
             Add New Chapter
@@ -62,18 +63,18 @@ export default async function AdminChapterListPage({ params }: { params: { id: s
                   </td>
                   <td className="px-6 py-4 text-right space-x-3">
                     <Link 
-                      href={`/admin/manga/${params.id}/chapters/${chapter.id}/edit`} 
+                      href={`/admin/manga/${mangaId}/chapters/${chapter.id}/edit`} 
                       className="text-neutral-300 hover:text-white transition underline"
                     >
                       Edit
                     </Link>
                     <Link 
-                      href={`/admin/manga/${params.id}/chapters/${chapter.id}/pages`} 
+                      href={`/admin/manga/${mangaId}/chapters/${chapter.id}/pages`} 
                       className="text-red-500 hover:text-red-400 transition underline"
                     >
                       Upload Pages
                     </Link>
-                    <form action={deleteChapter.bind(null, chapter.id, params.id)} className="inline">
+                    <form action={deleteChapter.bind(null, chapter.id, mangaId)} className="inline">
                       <button className="text-red-500 hover:text-red-400 transition underline">
                         Delete
                       </button>

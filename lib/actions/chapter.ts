@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import type { CreateChapterInput } from '@/types/chapter'
 
 export async function createChapter(data: CreateChapterInput) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('chapters')
@@ -21,7 +21,7 @@ export async function createChapter(data: CreateChapterInput) {
 }
 
 export async function updateChapter(id: string, mangaId: string, data: Partial<CreateChapterInput>) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('chapters')
@@ -37,7 +37,7 @@ export async function updateChapter(id: string, mangaId: string, data: Partial<C
 }
 
 export async function deleteChapter(id: string, mangaId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('chapters')

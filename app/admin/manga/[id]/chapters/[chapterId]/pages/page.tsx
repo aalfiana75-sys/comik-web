@@ -5,13 +5,14 @@ import ChapterPageUpload from '@/components/admin/ChapterPageUpload'
 import { deletePage } from '@/lib/actions/page'
 import type { Page } from '@/types/page'
 
-export default async function AdminChapterPagesPage({ params }: { params: { id: string, chapterId: string } }) {
-  const supabase = createClient()
+export default async function AdminChapterPagesPage({ params }: { params: Promise<{ id: string, chapterId: string }> }) {
+  const { id, chapterId } = await params
+  const supabase = await createClient()
   
   const { data: chapter, error: chapterError } = await supabase
     .from('chapters')
     .select('*, manga:manga_id(title)')
-    .eq('id', params.chapterId)
+    .eq('id', chapterId)
     .single()
 
   if (chapterError || !chapter) {
@@ -21,14 +22,14 @@ export default async function AdminChapterPagesPage({ params }: { params: { id: 
   const { data: pages, error: pagesError } = await supabase
     .from('pages')
     .select('*')
-    .eq('chapter_id', params.chapterId)
+    .eq('chapter_id', chapterId)
     .order('page_number', { ascending: true })
 
   return (
     <div className="bg-neutral-900 min-h-screen p-8 text-white">
       <div className="max-w-6xl mx-auto">
         <header className="mb-10">
-          <Link href={`/admin/manga/${params.id}/chapters`} className="text-neutral-500 hover:text-white transition text-sm mb-4 inline-block">
+          <Link href={`/admin/manga/${id}/chapters`} className="text-neutral-500 hover:text-white transition text-sm mb-4 inline-block">
             &larr; Back to Chapters
           </Link>
           <div className="flex items-center gap-4">
@@ -42,7 +43,7 @@ export default async function AdminChapterPagesPage({ params }: { params: { id: 
         </header>
 
         <section className="mb-12">
-          <ChapterPageUpload chapterId={params.chapterId} />
+          <ChapterPageUpload chapterId={chapterId} />
         </section>
 
         <section>
@@ -62,7 +63,7 @@ export default async function AdminChapterPagesPage({ params }: { params: { id: 
                   </div>
                 </div>
                 <div className="p-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent">
-                  <form action={deletePage.bind(null, page.id, params.chapterId)}>
+                  <form action={deletePage.bind(null, page.id, chapterId)}>
                     <button className="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition font-bold">
                       Delete
                     </button>

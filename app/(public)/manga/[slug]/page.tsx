@@ -3,13 +3,14 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Manga } from '@/types/manga'
 
-export default async function MangaDetailPage({ params }: { params: { slug: string } }) {
-  const supabase = createClient()
+export default async function MangaDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const supabase = await createClient()
   
   const { data: manga, error: mangaError } = await supabase
     .from('manga')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single()
 
   if (mangaError || !manga) {

@@ -9,7 +9,7 @@ import {
 import Link from 'next/link'
 
 export default async function AdminDashboard() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   // Fetch basic stats
   const [

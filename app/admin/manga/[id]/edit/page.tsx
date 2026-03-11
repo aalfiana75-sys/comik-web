@@ -3,13 +3,14 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import MangaForm from '@/components/admin/MangaForm'
 
-export default async function EditMangaPage({ params }: { params: { id: string } }) {
-  const supabase = createClient()
+export default async function EditMangaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const supabase = await createClient()
   
   const { data: manga, error } = await supabase
     .from('manga')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !manga) {

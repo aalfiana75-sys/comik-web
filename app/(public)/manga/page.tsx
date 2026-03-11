@@ -3,7 +3,7 @@ import MangaCard from '@/components/manga/MangaCard'
 import type { Manga } from '@/types/manga'
 
 export default async function MangaListPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data: mangaList, error } = await supabase
     .from('manga')

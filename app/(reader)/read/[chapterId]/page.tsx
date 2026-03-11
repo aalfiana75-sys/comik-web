@@ -4,14 +4,15 @@ import Link from 'next/link'
 import type { Page } from '@/types/page'
 import type { Chapter } from '@/types/chapter'
 
-export default async function ReaderPage({ params }: { params: { chapterId: string } }) {
-  const supabase = createClient()
+export default async function ReaderPage({ params }: { params: Promise<{ chapterId: string }> }) {
+  const { chapterId } = await params
+  const supabase = await createClient()
 
   // 1. Fetch current chapter and its pages
   const { data: chapter, error: chapterError } = await supabase
     .from('chapters')
     .select('*, manga:manga_id(title, slug)')
-    .eq('id', params.chapterId)
+    .eq('id', chapterId)
     .single()
 
   if (chapterError || !chapter) {
@@ -21,7 +22,7 @@ export default async function ReaderPage({ params }: { params: { chapterId: stri
   const { data: pages, error: pagesError } = await supabase
     .from('pages')
     .select('*')
-    .eq('chapter_id', params.chapterId)
+    .eq('chapter_id', chapterId)
     .order('page_number', { ascending: true })
 
   // 2. Fetch all chapters for this manga to find Next/Prev
@@ -31,7 +32,7 @@ export default async function ReaderPage({ params }: { params: { chapterId: stri
     .eq('manga_id', chapter.manga_id)
     .order('chapter_number', { ascending: true })
 
-  const currentIndex = allChapters?.findIndex((c: any) => c.id === params.chapterId) ?? -1
+  const currentIndex = allChapters?.findIndex((c: any) => c.id === chapterId) ?? -1
   const prevChapter = currentIndex > 0 ? allChapters?.[currentIndex - 1] : null
   const nextChapter = currentIndex < (allChapters?.length ?? 0) - 1 ? allChapters?.[currentIndex + 1] : null
 

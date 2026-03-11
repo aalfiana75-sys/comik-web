@@ -6,10 +6,10 @@ import type { Manga } from '@/types/manga'
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string; genre?: string; sort?: string }
+  searchParams: Promise<{ q?: string; genre?: string; sort?: string }>
 }) {
-  const supabase = createClient()
-  const { q, genre, sort } = searchParams
+  const { q, genre, sort } = await searchParams
+  const supabase = await createClient()
 
   // Build Query
   let query = supabase
